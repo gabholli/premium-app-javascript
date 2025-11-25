@@ -1,5 +1,7 @@
 const fs = require('fs').promises;
-const tf = require('@tensorflow/tfjs-node');
+const path = require('path');
+const tf = require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-backend-cpu');
 const Papa = require('papaparse');
 
 const MODEL_PATH = 'model.json';
@@ -49,7 +51,25 @@ async function main() {
     const yTrue = df.map(row => row['ActualPremium']);
 
     console.log('Loading model and scaler...');
-    const model = await tf.loadLayersModel(`file://${MODEL_PATH}`);
+
+    // Load model with custom handler
+    const modelDir = MODEL_PATH.replace('.json', '');
+    const loadHandler = {
+        load: async () => {
+            const modelJSON = JSON.parse(
+                await fs.readFile(path.join(modelDir, 'model.json'), 'utf8')
+            );
+            const weightData = await fs.readFile(path.join(modelDir, 'weights.bin'));
+
+            return {
+                modelTopology: modelJSON.modelTopology,
+                weightSpecs: modelJSON.weightsManifest[0].weights,
+                weightData: weightData.buffer
+            };
+        }
+    };
+
+    const model = await tf.loadLayersModel(loadHandler);
     const scalerData = await fs.readFile(SCALER_PATH, 'utf8');
     const scaler = JSON.parse(scalerData);
 

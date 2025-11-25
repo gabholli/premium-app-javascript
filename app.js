@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
-const tf = require('@tensorflow/tfjs-node');
+const tf = require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-backend-cpu');
 
 // -------------------------
 // App setup
@@ -9,7 +10,7 @@ const tf = require('@tensorflow/tfjs-node');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('static'));
+app.use('/static', express.static('static'));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'templates'));
 
@@ -25,7 +26,25 @@ let _calib = null;
 
 async function loadModel() {
     if (_model === null) {
-        _model = await tf.loadLayersModel(`file://${MODEL_PATH}`);
+        // Create custom IOHandler for loading
+        const modelDir = MODEL_PATH.replace('.json', '');
+
+        const loadHandler = {
+            load: async () => {
+                const modelJSON = JSON.parse(
+                    await fs.readFile(path.join(modelDir, 'model.json'), 'utf8')
+                );
+                const weightData = await fs.readFile(path.join(modelDir, 'weights.bin'));
+
+                return {
+                    modelTopology: modelJSON.modelTopology,
+                    weightSpecs: modelJSON.weightsManifest[0].weights,
+                    weightData: weightData.buffer
+                };
+            }
+        };
+
+        _model = await tf.loadLayersModel(loadHandler);
     }
     return _model;
 }

@@ -11,7 +11,9 @@
  */
 
 const fs = require('fs').promises;
-const tf = require('@tensorflow/tfjs-node');
+const path = require('path');
+const tf = require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-backend-cpu');
 const Papa = require('papaparse');
 
 // Parse command line arguments
@@ -262,9 +264,42 @@ async function main(csvPath, outModel, outScaler) {
     const metrics = calculateMetrics(y_test, Array.from(yPred));
     console.log(JSON.stringify(metrics, null, 2));
 
-    // Save model
+    // Save model using custom handler
     console.log(`Saving model to ${outModel}...`);
-    await model.save(`file://./${outModel.replace('.json', '')}`);
+
+    // Create a custom IOHandler for saving
+    const modelDir = outModel.replace('.json', '');
+    await fs.mkdir(modelDir, { recursive: true });
+
+    const saveHandler = {
+        save: async (modelArtifacts) => {
+            // Save model topology and weights
+            const modelJSON = {
+                modelTopology: modelArtifacts.modelTopology,
+                weightsManifest: [{
+                    paths: ['weights.bin'],
+                    weights: modelArtifacts.weightSpecs
+                }]
+            };
+
+            // Write model.json
+            await fs.writeFile(
+                path.join(modelDir, 'model.json'),
+                JSON.stringify(modelJSON, null, 2)
+            );
+
+            // Write weights.bin
+            const weightData = Buffer.from(modelArtifacts.weightData);
+            await fs.writeFile(
+                path.join(modelDir, 'weights.bin'),
+                weightData
+            );
+
+            return { modelArtifactsInfo: { dateSaved: new Date() } };
+        }
+    };
+
+    await model.save(saveHandler);
 
     // Save scaler
     console.log(`Saving scaler to ${outScaler}...`);
