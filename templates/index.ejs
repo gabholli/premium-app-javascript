@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindHome Insurance Estimator</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+  <main class="container">
+    <div class="brand">
+      <img src="/static/mindhomeco_logo.jpg" alt="MindHome logo" class="logo" />
+      <h1>MindHome Insurance Estimator</h1>
+    </div>
+
+    <form id="quote-form" class="form">
+      <label>
+        Bedrooms
+        <input type="number" name="Bedrooms" min="0" step="1" required />
+      </label>
+      <label>
+        Square Footage
+        <input type="number" name="Square Footage" min="100" step="1" required />
+      </label>
+      <label>
+        Coverage A ($)
+        <input type="number" name="Coverage A" min="10000" step="100" required />
+      </label>
+      <label>
+        Age of Home (years)
+        <input type="number" name="Age of Home" min="0" step="1" required />
+      </label>
+      <button type="submit">Get Quote</button>
+    </form>
+
+    <div id="result" class="result" aria-live="polite"></div>
+  </main>
+
+  <script>
+    const form = document.getElementById('quote-form');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      result.textContent = 'Calculating...';
+
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      for (const k in payload) payload[k] = Number(payload[k]);
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Server error');
+        result.textContent = `Predicted Annual Premium: $${data.predicted_premium}`;
+      } catch (err) {
+        result.textContent = `Error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+
+</html>

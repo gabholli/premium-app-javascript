@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Generated Model Files (large binary files)
+model.json/
+*.weights.bin
+scaler.json
+calib.json
+
+# Python artifacts (if you have any lingering)
+*.pkl
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files (optional - see note below)
+# Uncomment if your CSV files are large or contain sensitive data
+# *.csv
+# simulated_home_insurance_quotes.csv
+# calib_samples.csv
+
+# Test coverage
+coverage/
+
+# Build outputs
+dist/
+build/
