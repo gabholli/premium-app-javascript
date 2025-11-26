@@ -3,7 +3,7 @@
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-body {
+/* body {
     margin: 0;
     background: #0b132b;
     color: #e0e6f1;
@@ -56,6 +56,72 @@ h1 {
 
 button {
     grid-column: 1 / -1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 10px;
+    background: #5bc0be;
+    color: #062c43;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+button:hover {
+    background: #6bd4d2;
+}
+
+.result {
+    margin-top: 1.25rem;
+    font-size: 1.15rem;
+} */
+
+body {
+    padding: 0;
+    margin: 0;
+    background: #0b132b;
+    color: #e0e6f1;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100dvh;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    height: 100px;
+}
+
+.brand h1 {
+    text-align: center;
+}
+
+#quote-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 1.7em;
+}
+
+.form input {
+    padding: 0.6rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #3a506b;
+    background: #0b132b;
+    color: #fff;
+    margin-left: 1.5em;
+}
+
+button {
     padding: 0.75rem 1rem;
     border: none;
     border-radius: 10px;
