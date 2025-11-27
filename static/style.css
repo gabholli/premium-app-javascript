@@ -133,6 +133,18 @@ a {
     font-weight: 700;
 }
 
+a {
+    padding: 0.65rem 1rem;
+    text-decoration: none;
+}
+
+.form-button-and-link-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 3em;
+}
+
 button:hover {
     background: #6bd4d2;
 }
