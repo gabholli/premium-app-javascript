@@ -122,7 +122,8 @@ body {
     width: 125px;
 }
 
-button {
+button,
+a {
     padding: 0.75rem 1rem;
     border: none;
     border-radius: 10px;
