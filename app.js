@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
-const tf = require('@tensorflow/tfjs-node');
+const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-backend-cpu');
 
 // -------------------------
