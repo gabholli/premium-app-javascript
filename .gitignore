@@ -3,12 +3,6 @@ node_modules/
 package-lock.json
 yarn.lock
 
-# Generated Model Files (large binary files)
-model.json/
-*.weights.bin
-scaler.json
-calib.json
-
 # Python artifacts (if you have any lingering)
 *.pkl
 __pycache__/
